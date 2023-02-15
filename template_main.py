@@ -3,14 +3,13 @@ import importlib
 
 if __name__ == '__main__':
     # TODO specify the right path
-    install_dir = 'PATH/TO/template'
+    install_dir = 'PATH/TO/abc_export'
     if not sys.path.__contains__(install_dir):
         sys.path.append(install_dir)
 
-    # TODO import right modules
     modules = [
-        "Prefs",
-        "MayaTool"
+        "ABCExport",
+        "ABCAsset",
     ]
 
     from utils import *
@@ -19,13 +18,11 @@ if __name__ == '__main__':
     for module in modules:
         importlib.import_module(module)
 
-    # TODO import the app
-    from MayaTool import *
+    from ABCExport import *
 
-    # TODO rename app variable and Class
     try:
-        app.close()
+        abc_export.close()
     except:
         pass
-    app = MayaTool()
-    app.show()
+    abc_export = ABCExport()
+    abc_export.show()
