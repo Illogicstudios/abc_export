@@ -48,7 +48,7 @@ You also must have a folder "database" full of text file for each asset. A data 
   <br/>
 </div>
 
-A valid folder is an existing folder named "abc"
+A valid folder is an existing folder named "abc".
 
 ### Exporting as .abc
 
@@ -60,7 +60,7 @@ A valid folder is an existing folder named "abc"
   <br/>
 </div>
 
-The button is enabled when the folder is valid and when atleast one asset is selected
+The button is enabled when the folder is valid and when atleast one asset is selected. You can specify from which frame to which frame you want to export.
 
 <div align="center">
   <span style="margin-left:-50px">
@@ -94,4 +94,4 @@ The button is enabled when the folder is valid and when atleast one asset is sel
   <br/>
 </div>
 
-With this architecture many assets with the same rigging can be export to differents ABCs (for example "chara_00" and "chara_01")
+With this architecture many assets with the same rigging can be export to differents ABCs (for example "chara_00" and "chara_01").
