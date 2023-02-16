@@ -48,7 +48,7 @@ You also must have a folder "database" full of text file for each asset. A data 
   <br/>
 </div>
 
-A valid folder is an existing folder named "abc"
+A valid folder is an existing folder named "abc".
 
 ### Exporting as .abc
 
@@ -60,38 +60,14 @@ A valid folder is an existing folder named "abc"
   <br/>
 </div>
 
-The button is enabled when the folder is valid and when atleast one asset is selected
+The button is enabled when the folder is valid and when atleast one asset is selected. You can specify from which frame to which frame you want to export.
 
 <div align="center">
-  <span style="margin-left:-50px">
-    <img src="https://user-images.githubusercontent.com/94440879/219339388-cc1bd81c-528e-4684-91d4-af213216a5ba.png" height=31px>
+  <span>
+    <img src="https://user-images.githubusercontent.com/94440879/219347243-0525e34d-dcf6-425d-8c7c-8554ac32bd87.png" width=30%>
   </span>
-      <div style="margin-left:0px">
-        <img src="https://user-images.githubusercontent.com/94440879/219340603-3c2b2942-976e-4074-bb57-61c0fe3c0610.png" height=34px>
-      </div>
-          <div style="margin-left:50px">
-            <img src="https://user-images.githubusercontent.com/94440879/219340895-1fc18b94-cfe2-44bc-abdf-dc678811f200.png" height=34px>
-          </div>
-      <div style="margin-left:0px">
-        <img src="https://user-images.githubusercontent.com/94440879/219341144-3d95b77b-acdc-44f8-bed4-d018dbc98db2.png" height=35px>
-      </div>
-          <div style="margin-left:50px">
-            <img src="https://user-images.githubusercontent.com/94440879/219340895-1fc18b94-cfe2-44bc-abdf-dc678811f200.png" height=34px>
-          </div>
-      <div style="margin-left:0px">
-        <img src="https://user-images.githubusercontent.com/94440879/219341308-cffddcc2-6983-422e-a239-cece6d40bc20.png" height=31px>
-      </div>
-          <div style="margin-left:50px">
-            <img src="https://user-images.githubusercontent.com/94440879/219340895-1fc18b94-cfe2-44bc-abdf-dc678811f200.png" height=34px>
-          </div>
-      <div style="margin-left:0px">
-        <img src="https://user-images.githubusercontent.com/94440879/219341522-9ed34507-0bb3-4ee4-a434-20b2b0839089.png" height=30px>
-      </div>
-          <div style="margin-left:50px">
-            <img src="https://user-images.githubusercontent.com/94440879/219340895-1fc18b94-cfe2-44bc-abdf-dc678811f200.png" height=34px>
-          </div>
   <p weight="bold">Example of the file architecture built from the ABC Export tool</p>
   <br/>
 </div>
 
-With this architecture many assets with the same rigging can be export to differents ABCs (for example "chara_00" and "chara_01")
+With this architecture many assets with the same rigging can be export to differents ABCs (for example "chara_00" and "chara_01").
