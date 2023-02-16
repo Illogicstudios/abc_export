@@ -100,9 +100,13 @@ class ABCExport(QDialog):
             self.__stop_and_display_error()
             return False
         else:
-            database_path += "/assets/database"
+            # TODO uncomment this and comment next three
+            # database_path += "/assets/database"
+            # if not os.path.exists(database_path):
+            #     database_path += "/database"
+            database_path += "/database"
             if not os.path.exists(database_path):
-                database_path += "/database"
+                database_path += "/assets/database"
                 if not os.path.exists(database_path):
                     self.__stop_and_display_error()
                     return False
