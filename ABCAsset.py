@@ -7,7 +7,7 @@ class ABCAsset:
 
     # Get the next version (version when the ABC will be exported)
     @staticmethod
-    def next_version(self, folder):
+    def next_version(folder):
         version = 1
         if os.path.isdir(folder):
             for f in os.listdir(folder):
@@ -46,7 +46,7 @@ class ABCAsset:
     def export(self, folder, start, end):
         abc_name = self.get_name_with_num()
         asset_dir_path = os.path.join(folder, abc_name)
-        next_version = self.next_version(asset_dir_path)
+        next_version = ABCAsset.next_version(asset_dir_path)
         version_dir_path = os.path.join(asset_dir_path, str(next_version).zfill(4))
         path = os.path.join(version_dir_path, abc_name + ".abc")
         path = path.replace("\\", "/")
