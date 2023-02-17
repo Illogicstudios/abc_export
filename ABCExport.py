@@ -21,7 +21,7 @@ from Prefs import *
 
 import maya.OpenMaya as OpenMaya
 
-from ABCAsset import *
+from ABCExportAsset import *
 
 # ######################################################################################################################
 
@@ -118,8 +118,6 @@ class ABCExport(QDialog):
         self.deleteLater()
         msg = QMessageBox()
         lyt_msg = msg.layout()
-        lyt_msg.addItem(QSpacerItem(400, 400, QSizePolicy.Minimum, QSizePolicy.Expanding),
-                        lyt_msg.rowCount(), 0, 1, lyt_msg.columnCount())
         msg.setWindowTitle("Error Database not found")
         msg.setIcon(QMessageBox.Warning)
         msg.setText("Database not found")
@@ -270,7 +268,7 @@ class ABCExport(QDialog):
             # If the folder is valid we display the "Next version" item
             if abc_folder_valid:
                 next_version_item = QTableWidgetItem(
-                    str(ABCAsset.next_version(os.path.join(self.__folder_path, abc.get_name_with_num()))).zfill(4))
+                    str(ABCExportAsset.next_version(os.path.join(self.__folder_path, abc.get_name_with_num()))).zfill(4))
                 next_version_item.setTextAlignment(Qt.AlignCenter)
                 self.__ui_abcs_table.setItem(row_index, 1, next_version_item)
 
@@ -357,11 +355,12 @@ class ABCExport(QDialog):
             namespace_found = None
             # Retrieve all the rigging references
             for name in existing_assets.keys():
-                match = re.match(r".*\/" + name + "_rigging[a-zA-Z_\.]*[0-9]{3,4}\.ma", ref.unresolvedPath())
+                match = re.match(r".*\/" + name + "_rigging[a-zA-Z_\.]*[0-9]{3,4}\.m[ab]", ref.unresolvedPath())
                 if match:
                     name_found = name
                     namespace_found = ref.fullNamespace
                     break
+
             # Create all the ABCs if they have geos
             if name_found is not None:
                 geos = self.__list_existing_geos(existing_assets, name_found, namespace_found)
@@ -376,7 +375,7 @@ class ABCExport(QDialog):
                 if valid:
                     if name_found not in abcs_by_name:
                         abcs_by_name[name_found] = []
-                    abcs_by_name[name_found].append(ABCAsset(name_found, namespace_found, geos))
+                    abcs_by_name[name_found].append(ABCExportAsset(name_found, namespace_found, geos))
 
         # If many abcs with the same name, we change their num to defferenciate them
         for name, abcs in abcs_by_name.items():

@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     modules = [
         "ABCExport",
-        "ABCAsset",
+        "ABCExportAsset",
     ]
 
     from utils import *
