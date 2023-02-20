@@ -123,7 +123,6 @@ class ABCExport(QDialog):
         self.__prefs["window_size"] = {"width": size.width(), "height": size.height()}
         pos = self.pos()
         self.__prefs["window_pos"] = {"x": pos.x(), "y": pos.y()}
-        self.__prefs.pop("window_size")
 
     # Retrieve preferences
     def __retrieve_prefs(self):
