@@ -100,16 +100,10 @@ class ABCExport(QDialog):
             self.__stop_and_display_error()
             return False
         else:
-            # TODO uncomment this and comment next three
-            # database_path += "/assets/database"
-            # if not os.path.exists(database_path):
-            #     database_path += "/database"
-            database_path += "/database"
+            database_path += "/assets/_database"
             if not os.path.exists(database_path):
-                database_path += "/assets/database"
-                if not os.path.exists(database_path):
-                    self.__stop_and_display_error()
-                    return False
+                self.__stop_and_display_error()
+                return False
         self.__database_path = database_path
         return True
 
@@ -117,7 +111,6 @@ class ABCExport(QDialog):
     def __stop_and_display_error(self):
         self.deleteLater()
         msg = QMessageBox()
-        lyt_msg = msg.layout()
         msg.setWindowTitle("Error Database not found")
         msg.setIcon(QMessageBox.Warning)
         msg.setText("Database not found")
@@ -364,6 +357,7 @@ class ABCExport(QDialog):
             # Create all the ABCs if they have geos
             if name_found is not None:
                 geos = self.__list_existing_geos(existing_assets, name_found, namespace_found)
+                print_var(name_found,namespace_found,geos)
                 valid = True
                 if not geos:
                     valid = False
