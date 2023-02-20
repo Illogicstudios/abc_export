@@ -135,15 +135,8 @@ class ABCExport(QDialog):
             pos = self.__prefs["window_pos"]
             self.__ui_pos = QPoint(pos["x"], pos["y"])
 
-    # Create callbacks
-    def showEvent(self, arg__1: QShowEvent) -> None:
-        pass
-        # self.__selection_callback = \
-        #     OpenMaya.MEventMessage.addEventCallback("SelectionChanged", self.on_selection_changed)
-
     # Remove callbacks
     def hideEvent(self, arg__1: QCloseEvent) -> None:
-        # OpenMaya.MMessage.removeCallback(self.__selection_callback)
         self.__save_prefs()
 
     # Create the ui
