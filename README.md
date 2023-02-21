@@ -1,6 +1,8 @@
 # ABC Export
 
-ABC Export is a tool to export ABCs with versioning
+ABC Export is a tool to export ABCs with versioning. 
+
+It pairs up with the ABC Import tool : https://github.com/Illogicstudios/abc_import
 
 ## How to install
 
