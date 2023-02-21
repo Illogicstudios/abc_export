@@ -79,7 +79,6 @@ class ABCExportAsset:
                 par = listRelatives(n, parent=True)
                 if par is not None:
                     name_export = n.split(':')[-1].strip("Shape")
-                    print(name_export)
                     # Duplicate object
                     dupl_obj = duplicate(n, name=name_export, rc=True, rr=True)
 
