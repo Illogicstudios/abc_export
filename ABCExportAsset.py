@@ -78,8 +78,10 @@ class ABCExportAsset:
                 # Check if selected object is a child of an object
                 par = listRelatives(n, parent=True)
                 if par is not None:
+                    name_export = n.split(':')[-1].strip("Shape")
+                    print(name_export)
                     # Duplicate object
-                    dupl_obj = duplicate(n, name=n.split(':')[-1], rc=True, rr=True)
+                    dupl_obj = duplicate(n, name=name_export, rc=True, rr=True)
 
                     # Delete duplicated children
                     children_td = listRelatives(dupl_obj, c=True, pa=True)[1:]
