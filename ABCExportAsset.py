@@ -1,6 +1,7 @@
 import os
 import logging
 from pymel.core import *
+from utils import *
 
 
 class ABCExportAsset:
@@ -57,6 +58,7 @@ class ABCExportAsset:
         command += " -writeVisibility  -stripNamespaces  -worldSpace -dataFormat ogawa -eulerFilter "
         if not self.__geos:
             return
+
         for geo in self.__geos:
             command += " -root %s" % geo
         command += " -file \"%s\"" % (path)
@@ -64,3 +66,41 @@ class ABCExportAsset:
         refresh(suspend=True)
         AbcExport(j=command)
         refresh(suspend=False)
+
+        self.__export_light(version_dir_path, start, end)
+
+    def __export_light(self, version_dir_path, start, end):
+
+        lights = ls(self.__namespace + ":*", type="light")
+        if len(lights) > 0:
+            bake_list = []
+            for n in lights:
+                # Check if selected object is a child of an object
+                par = listRelatives(n, parent=True)
+                if par is not None:
+                    # Duplicate object
+                    dupl_obj = duplicate(n, name=n.split(':')[-1], rc=True, rr=True)
+
+                    # Delete duplicated children
+                    children_td = listRelatives(dupl_obj, c=True, pa=True)[1:]
+                    for c in children_td:
+                        delete(c)
+
+                    # Unparent object, Add constraints and append it to bake List
+                    to_bake = parent(dupl_obj, w=True)
+                    bake_list.append(to_bake)
+                    parentConstraint(n, to_bake, mo=False)
+                    scaleConstraint(n, to_bake, mo=False)
+
+            # Bake animation and delete constraints
+            for i in bake_list:
+                bakeResults(i, t=(start, end))
+                delete(i[0], constraints=True)
+
+            abc_name = self.get_name_with_num()
+            path = os.path.join(version_dir_path, abc_name + "_light.abc")
+            path = path.replace("\\", "/")
+            exportSelected(path, type="mayaAscii")
+
+            for i in bake_list:
+                delete(i)

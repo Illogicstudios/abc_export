@@ -335,21 +335,32 @@ class ABCExport(QDialog):
         abcs_by_name = {}
         existing_assets = self.__get_database()
         references = listReferences()
+        namespaces = namespaceInfo(listOnlyNamespaces=True, recurse=True)
+        assets_found = {}
+        # Retrieve all the rigging in references
         for ref in references:
+            match = re.match(r".*\/(.+)_rigging[a-zA-Z_\.]*[0-9]{3,4}\.m[ab]", ref.unresolvedPath())
+            if match:
+                assets_found[ref.fullNamespace]= match.groups()[0]
+        # Retrieve all the rigging in namespaces
+        for ns in namespaces:
+            match = re.match(r"(.+)_rigging[a-zA-Z_\.]*[0-9]{3,4}$", ns)
+            if match:
+                assets_found[ns]= match.groups()[0]
+
+        for namespace, name in assets_found.items():
             name_found = None
             namespace_found = None
-            # Retrieve all the rigging references
-            for name in existing_assets.keys():
-                match = re.match(r".*\/" + name + "_rigging[a-zA-Z_\.]*[0-9]{3,4}\.m[ab]", ref.unresolvedPath())
-                if match:
+            # Retrieve all the rigging found in database
+            for name_existing in existing_assets.keys():
+                if name_existing == name:
                     name_found = name
-                    namespace_found = ref.fullNamespace
+                    namespace_found = namespace
                     break
 
             # Create all the ABCs if they have geos
             if name_found is not None:
                 geos = self.__list_existing_geos(existing_assets, name_found, namespace_found)
-                print_var(name_found,namespace_found,geos)
                 valid = True
                 if not geos:
                     valid = False
@@ -364,7 +375,7 @@ class ABCExport(QDialog):
                     abcs_by_name[name_found].append(ABCExportAsset(name_found, namespace_found, geos))
 
         # If many abcs with the same name, we change their num to defferenciate them
-        for name, abcs in abcs_by_name.items():
+        for name_existing, abcs in abcs_by_name.items():
             if len(abcs) > 1:
                 i = 0
                 for abc in abcs:
