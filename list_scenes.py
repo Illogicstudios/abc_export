@@ -20,7 +20,7 @@ def print_scene_paths(scenes):
     print("\n############################################################\n")
     print("                      Copy-paste this :\n")
     for scene in scenes:
-        print("\"" + scene + "\"")
+        print(scene + " ^")
     print("\n############################################################\n")
 
 
