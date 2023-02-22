@@ -1,7 +1,11 @@
 import os
 import logging
 from pymel.core import *
-from utils import *
+
+try:
+    from utils import *
+except:
+    pass
 
 
 class ABCExportAsset:
@@ -70,7 +74,6 @@ class ABCExportAsset:
         self.__export_light(version_dir_path, start, end)
 
     def __export_light(self, version_dir_path, start, end):
-
         lights = ls(self.__namespace + ":*", type="light")
         if len(lights) > 0:
             bake_list = []

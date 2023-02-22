@@ -2,6 +2,7 @@ import os
 from functools import partial
 
 import sys
+import json
 
 from pymel.core import *
 import maya.OpenMayaUI as omui
@@ -15,9 +16,11 @@ from PySide2.QtGui import *
 
 from shiboken2 import wrapInstance
 
-from utils import *
-
-from Prefs import *
+try:
+    from utils import *
+    from Prefs import *
+except:
+    pass
 
 import maya.OpenMaya as OpenMaya
 
@@ -27,9 +30,10 @@ from ABCExportAsset import *
 
 _FILE_NAME_PREFS = "abc_export"
 
+
 # ######################################################################################################################
 
-
+main_window = omui.MQtUtil.mainWindow()
 class ABCExport(QDialog):
 
     # Get the directory parent of the scene
@@ -47,7 +51,20 @@ class ABCExport(QDialog):
     def __is_abc_folder(folder):
         return re.match(r".*/abc(?:/|\\)?$", folder) and os.path.exists(folder)
 
-    def __init__(self, prnt=wrapInstance(int(omui.MQtUtil.mainWindow()), QWidget)):
+    @staticmethod
+    def get_database(database_path):
+        assets = {}
+        list_assets = [asset for asset in os.listdir(database_path) if
+                       os.path.isfile(os.path.join(database_path, asset))]
+        for asset in list_assets:
+            filepath = os.path.join(database_path, asset)
+            with open(filepath) as json_file:
+                asset_data = json.load(json_file)
+            asset_name, file_extension = os.path.splitext(asset)
+            assets[asset_name] = asset_data
+        return assets
+
+    def __init__(self, prnt=wrapInstance(int(main_window), QWidget) if main_window is not None else None):
         super(ABCExport, self).__init__(prnt)
 
         # Common Preferences (common preferences on all tools)
@@ -218,7 +235,6 @@ class ABCExport(QDialog):
         self.__export_btn.setEnabled(enabled)
         self.__export_btn.setToolTip(tooltip)
 
-
     # Refresh the asset table
     def __refresh_abcs_table(self):
         selected_abcs = self.__selected_abcs
@@ -253,7 +269,8 @@ class ABCExport(QDialog):
             # If the folder is valid we display the "Next version" item
             if abc_folder_valid:
                 next_version_item = QTableWidgetItem(
-                    str(ABCExportAsset.next_version(os.path.join(self.__folder_path, abc.get_name_with_num()))).zfill(4))
+                    str(ABCExportAsset.next_version(os.path.join(self.__folder_path, abc.get_name_with_num()))).zfill(
+                        4))
                 next_version_item.setTextAlignment(Qt.AlignCenter)
                 self.__ui_abcs_table.setItem(row_index, 1, next_version_item)
 
@@ -308,19 +325,11 @@ class ABCExport(QDialog):
 
     # Retrieve all the asset datas in the database of the current project
     def __get_database(self):
-        assets = {}
-        list_assets = [asset for asset in os.listdir(self.__database_path) if
-                       os.path.isfile(os.path.join(self.__database_path, asset))]
-        for asset in list_assets:
-            filepath = os.path.join(self.__database_path, asset)
-            with open(filepath) as json_file:
-                asset_data = json.load(json_file)
-            asset_name, file_extension = os.path.splitext(asset)
-            assets[asset_name] = asset_data
-        return assets
+        return ABCExport.get_database(self.__database_path)
 
     # Retrieve all the geos of an asset in the scene
-    def __list_existing_geos(self, database, name, namespace_found):
+    @staticmethod
+    def list_existing_geos(database, name, namespace_found):
         geos = database[name]["geo"]
         new_geos = []
         for g in geos:
@@ -329,11 +338,13 @@ class ABCExport(QDialog):
                 new_geos.append(geo_ns_replaced)
         return new_geos
 
-    # Retrieve all the abcs existing in the scene and build the list of abc
-    def __retrieve_abcs(self):
-        self.__abcs = []
+        # Retrieve all the abcs existing in the scene and build the list of abc
+
+    @staticmethod
+    def retrieve_abcs(database_path):
+        abcs = []
         abcs_by_name = {}
-        existing_assets = self.__get_database()
+        existing_assets = ABCExport.get_database(database_path)
         references = listReferences()
         namespaces = namespaceInfo(listOnlyNamespaces=True, recurse=True)
         assets_found = {}
@@ -341,12 +352,12 @@ class ABCExport(QDialog):
         for ref in references:
             match = re.match(r".*\/(.+)_rigging[a-zA-Z_\.]*[0-9]{3,4}\.m[ab]", ref.unresolvedPath())
             if match:
-                assets_found[ref.fullNamespace]= match.groups()[0]
+                assets_found[ref.fullNamespace] = match.groups()[0]
         # Retrieve all the rigging in namespaces
         for ns in namespaces:
             match = re.match(r"(.+)_rigging[a-zA-Z_\.]*[0-9]{3,4}$", ns)
             if match:
-                assets_found[ns]= match.groups()[0]
+                assets_found[ns] = match.groups()[0]
 
         for namespace, name in assets_found.items():
             name_found = None
@@ -360,7 +371,7 @@ class ABCExport(QDialog):
 
             # Create all the ABCs if they have geos
             if name_found is not None:
-                geos = self.__list_existing_geos(existing_assets, name_found, namespace_found)
+                geos = ABCExport.list_existing_geos(existing_assets, name_found, namespace_found)
                 valid = True
                 if not geos:
                     valid = False
@@ -375,13 +386,69 @@ class ABCExport(QDialog):
                     abcs_by_name[name_found].append(ABCExportAsset(name_found, namespace_found, geos))
 
         # If many abcs with the same name, we change their num to defferenciate them
-        for name_existing, abcs in abcs_by_name.items():
-            if len(abcs) > 1:
+        for name_existing, abcs_existing in abcs_by_name.items():
+            if len(abcs_existing) > 1:
                 i = 0
-                for abc in abcs:
+                for abc in abcs_existing:
                     abc.set_num(i)
                     i += 1
-            self.__abcs.extend(abcs)
+            abcs.extend(abcs_existing)
+        return abcs
+
+    # Retrieve all the abcs existing in the scene and build the list of abc
+    def __retrieve_abcs(self):
+        self.__abcs = ABCExport.retrieve_abcs(self.__database_path)
+        # self.__abcs = []
+        # abcs_by_name = {}
+        # existing_assets = self.__get_database()
+        # references = listReferences()
+        # namespaces = namespaceInfo(listOnlyNamespaces=True, recurse=True)
+        # assets_found = {}
+        # # Retrieve all the rigging in references
+        # for ref in references:
+        #     match = re.match(r".*\/(.+)_rigging[a-zA-Z_\.]*[0-9]{3,4}\.m[ab]", ref.unresolvedPath())
+        #     if match:
+        #         assets_found[ref.fullNamespace]= match.groups()[0]
+        # # Retrieve all the rigging in namespaces
+        # for ns in namespaces:
+        #     match = re.match(r"(.+)_rigging[a-zA-Z_\.]*[0-9]{3,4}$", ns)
+        #     if match:
+        #         assets_found[ns]= match.groups()[0]
+        #
+        # for namespace, name in assets_found.items():
+        #     name_found = None
+        #     namespace_found = None
+        #     # Retrieve all the rigging found in database
+        #     for name_existing in existing_assets.keys():
+        #         if name_existing == name:
+        #             name_found = name
+        #             namespace_found = namespace
+        #             break
+        #
+        #     # Create all the ABCs if they have geos
+        #     if name_found is not None:
+        #         geos = self.__list_existing_geos(existing_assets, name_found, namespace_found)
+        #         valid = True
+        #         if not geos:
+        #             valid = False
+        #         else:
+        #             for geo in geos:
+        #                 if len(ls(geo)) > 1:
+        #                     valid = False
+        #                     break
+        #         if valid:
+        #             if name_found not in abcs_by_name:
+        #                 abcs_by_name[name_found] = []
+        #             abcs_by_name[name_found].append(ABCExportAsset(name_found, namespace_found, geos))
+        #
+        # # If many abcs with the same name, we change their num to defferenciate them
+        # for name_existing, abcs in abcs_by_name.items():
+        #     if len(abcs) > 1:
+        #         i = 0
+        #         for abc in abcs:
+        #             abc.set_num(i)
+        #             i += 1
+        #     self.__abcs.extend(abcs)
 
     # Export all the selected abcs
     def __export_selected_abcs(self):
