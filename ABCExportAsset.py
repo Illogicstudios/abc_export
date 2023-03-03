@@ -35,7 +35,11 @@ class ABCExportAsset:
         self.__num = 0
         self.__geos = geos
 
-    # Geter of the name merged with the num
+    # Getter of the name
+    def get_name(self):
+        return self.__name
+
+    # Getter of the name merged with the num
     def get_name_with_num(self):
         return self.__name + "_" + str(self.__num).zfill(2)
 
