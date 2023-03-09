@@ -163,7 +163,6 @@ class ABCExportAsset:
             command += " -root %s" % geo
         command += " -file \"%s\"" % (path)
 
-        # print(command)
         refresh(suspend=True)
         AbcExport(j=command)
         refresh(suspend=False)

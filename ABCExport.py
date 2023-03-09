@@ -67,6 +67,8 @@ class ABCExport(QDialog):
     def __init__(self, prnt=wrapInstance(int(main_window), QWidget) if main_window is not None else None):
         super(ABCExport, self).__init__(prnt)
 
+        loadPlugin('AbcExport', quiet =True)
+
         # Common Preferences (common preferences on all tools)
         self.__common_prefs = Prefs()
         # Preferences for this tool
