@@ -146,14 +146,24 @@ def export_char_in_scene(scene_path, database_path, abc_path, nb, nb_tot, filter
     return abc_exported
 
 
-def export_abcs_from_scenes(list_scenes, current_project_dir, filter_char, subsample, log_file_path):
+def export_abcs_from_scenes(list_scenes, current_project_dir, filter_char, subsample, log_file_folder):
     database_path = os.path.join(current_project_dir, "assets/_database")
     scene_abc_exported = {}
     nb_scenes = len(list_scenes)
-    i = 1
-    with open(log_file_path, "w") as log_file:
-        log_file.write("")
+    # Get the next log version
+    version = 1
+    for abc_export_log_name in os.listdir(log_file_folder):
+        match = re.match(r"^abc_export_([0-9]+).log$", abc_export_log_name)
+        if not match:
+            continue
+        curr_version = int(match.group(1))
+        if curr_version > version:
+            version = curr_version
+    log_file_path = os.path.join(log_file_folder, "abc_export_" + str(version + 1) + ".log")
 
+    open(log_file_path, "w").close()
+
+    i = 1
     with open(log_file_path, "a") as log_file:
         for file_path in list_scenes:
             if os.path.isfile(file_path):
@@ -177,13 +187,13 @@ def export_abcs_from_scenes(list_scenes, current_project_dir, filter_char, subsa
         print_scene(log_file, messages)
 
 
-def export_all(current_project_dir, scenes, filter_char, subsample, log_file_path):
+def export_all(current_project_dir, scenes, filter_char, subsample, log_file_folder):
     subprocess.check_call(
         [r"C:\Program Files\Autodesk\Maya2022\bin\mayapy.exe", __file__, current_project_dir,
-         filter_char, subsample, log_file_path] + scenes)
+         filter_char, subsample, log_file_folder] + scenes)
 
 
-def run_export_abc_scenes(folder_type, filter_char, subsample, log_file_path):
+def run_export_abc_scenes(folder_type, filter_char, subsample, log_file_folder):
     filter_char_enabled = len(filter_char) > 0
     current_project_dir = os.getenv("CURRENT_PROJECT_DIR")
     if current_project_dir is None:
@@ -201,7 +211,7 @@ def run_export_abc_scenes(folder_type, filter_char, subsample, log_file_path):
         msg = "Are you sure to export all abcs from these scenes ?\n\n" + scenes_str
     ret = QtWidgets.QMessageBox().question(None, '', msg, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
     if ret == QtWidgets.QMessageBox.Yes:
-        thread = Thread(target=export_all, args=(current_project_dir, scenes, filter_char, subsample, log_file_path))
+        thread = Thread(target=export_all, args=(current_project_dir, scenes, filter_char, subsample, log_file_folder))
         thread.start()
 
 
