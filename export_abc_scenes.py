@@ -151,7 +151,8 @@ def export_abcs_from_scenes(list_scenes, current_project_dir, filter_char, subsa
     scene_abc_exported = {}
     nb_scenes = len(list_scenes)
     # Get the next log version
-    version = 1
+    version = 0
+    if not os.path.exists(log_file_folder): os.makedirs(log_file_folder)
     for abc_export_log_name in os.listdir(log_file_folder):
         match = re.match(r"^abc_export_([0-9]+).log$", abc_export_log_name)
         if not match:
