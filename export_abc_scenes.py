@@ -117,8 +117,8 @@ def export_char_in_scene(scene_path, database_path, abc_path, nb, nb_tot, filter
     openFile(scene_path, force=True)
 
     abcs = ABCExport.retrieve_abcs(database_path)
-    start_frame = int(playbackOptions(min=True, query=True))
-    end_frame = int(playbackOptions(max=True, query=True))
+    start_frame = int(playbackOptions(min=True, query=True)) - 5
+    end_frame = int(playbackOptions(max=True, query=True)) + 5
 
     if not filter_char_enabled:
         os.system("cls")

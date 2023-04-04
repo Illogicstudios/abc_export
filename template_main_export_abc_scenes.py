@@ -14,8 +14,8 @@ __FOLDER_TYPE = r"^anim$"  # ANIM
 __FILTER_CHAR = ""
 #__FILTER_CHAR = "ch_namechar"
 
-__SUBSAMPLE = ""
-# __SUBSAMPLE = "-0.125 0 0.125"
+# __SUBSAMPLE = ""
+__SUBSAMPLE = "-0.125 0 0.125"
 
 __LOG_FILE_FOLDER = r"I:\tmp\log\abc_export"
 # ######################################################################################################################
