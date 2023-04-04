@@ -138,7 +138,7 @@ def export_char_in_scene(scene_path, database_path, abc_path, nb, nb_tot, filter
             os.system("cls")
             print_scene(log_file, ["Exporting : " + name_num, "Version : " + next_version, "from scene : " + scene_path,
                          "Scene " + nb + " on " + nb_tot])
-            abc_exported.append((name_num, next_version+subsample))
+            abc_exported.append((name_num, next_version))
             try:
                 abc.export(abc_path, start_frame, end_frame, len(subsample)>0, subsample, True)
             except Exception as e:
