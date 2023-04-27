@@ -18,14 +18,14 @@ from PySide2.QtGui import *
 from shiboken2 import wrapInstance
 
 try:
-    from utils import *
-    from Prefs import *
+    from common.utils import *
+    from common.Prefs import *
 except:
     pass
 
 import maya.OpenMaya as OpenMaya
 
-from ABCExportAsset import *
+from .ABCExportAsset import *
 
 # ######################################################################################################################
 
