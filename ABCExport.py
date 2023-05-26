@@ -416,6 +416,7 @@ class ABCExport(QDialog):
         abcs = []
         abcs_by_name = {}
         existing_assets = ABCExport.get_database(database_path)
+        name_existing_assets = list(existing_assets.keys())
         references = pm.listReferences()
         namespaces = pm.namespaceInfo(listOnlyNamespaces=True, recurse=True)
         assets_found = {}
@@ -430,7 +431,9 @@ class ABCExport(QDialog):
             for ref in references:
                 basename = os.path.basename(ref.unresolvedPath())
                 if name_char not in basename: continue
-                assets_found[ref.fullNamespace] = name_char
+                namespace = ref.fullNamespace
+                if namespace not in assets_found:
+                    assets_found[namespace] = name_char
 
         # Detect if the geos exists in the scene
         for namespace, name_char in assets_found.items():
@@ -448,7 +451,7 @@ class ABCExport(QDialog):
             if not valid: continue
             if name_char not in abcs_by_name:
                 abcs_by_name[name_char] = []
-                abcs_by_name[name_char].append(ABCExportAsset(name_char, namespace, geos))
+            abcs_by_name[name_char].append(ABCExportAsset(name_char, namespace, geos))
 
         # If many abcs with the same name, we change their num to differenciate them
         # Ex: ch_chara_00, ch_chara_01, ...
