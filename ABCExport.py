@@ -415,8 +415,9 @@ class ABCExport(QDialog):
     def retrieve_abcs(database_path):
         abcs = []
         abcs_by_name = {}
-        existing_assets = ABCExport.get_database(database_path)
-        name_existing_assets = list(existing_assets.keys())
+        existing_assets = dict(sorted(ABCExport.get_database(database_path).items(),
+                                      reverse=True, key=lambda item: item[1]["name"]))
+
         references = pm.listReferences()
         namespaces = pm.namespaceInfo(listOnlyNamespaces=True, recurse=True)
         assets_found = {}
@@ -433,6 +434,7 @@ class ABCExport(QDialog):
                 if name_char not in basename: continue
                 namespace = ref.fullNamespace
                 if namespace not in assets_found:
+                    print(namespace, name_char)
                     assets_found[namespace] = name_char
 
         # Detect if the geos exists in the scene
